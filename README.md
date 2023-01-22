@@ -1,1 +1,0 @@
-# lambda-web-adapter-example

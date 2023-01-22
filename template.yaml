@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-app
+  
+  Sample SAM Template for sam-app
+
+Globals:
+  Function:
+    Timeout: 5
+    MemorySize: 128
+
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      Architectures:
+        - arm64
+      Environment:
+        Variables:
+          PARAM1: VALUE
+    Metadata:
+      DockerTag: go1.x-v1
+      DockerContext: ./hello-world
+      Dockerfile: Dockerfile
+  LambdaFunctionUrl:
+    Type: AWS::Lambda::Url
+    Properties:
+      TargetFunctionArn: !GetAtt HelloWorldFunction.Arn
+      AuthType: NONE
+      Cors:
+        AllowMethods: [ 'GET' ]
+        AllowOrigins: [ '*' ]
+        AllowHeaders: [ 'Content-Type', 'Authorization', 'X-Amz-Date', 'X-Api-Key', 'X-Amz-Security-Token', 'X-Amz-User-Agent' ]
+
+Outputs:
+  Endpoint:
+    Description: URL for function
+    Value: !GetAtt LambdaFunctionUrl.FunctionUrl
